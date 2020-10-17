@@ -1,6 +1,12 @@
-Version 1.0
+Version 2.0
 -----------
 
+
+
+Version 1.0
+-----------
+- ``RC.1`` Added the game score
+- ``B.6`` Implemented the main logic of the game
 - ``B.5`` Implemented when an apple is eaten it spawns in a random location
 - ``B.4`` Implemented eat apples
 - ``B.3`` Implemented collision with the borders

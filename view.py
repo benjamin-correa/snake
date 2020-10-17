@@ -13,7 +13,7 @@ if __name__ == '__main__':
     width = 1000
     height = 1000
 
-    window = glfw.create_window(width, height, 'GUI', None, None)
+    window = glfw.create_window(width, height, 'Snake', None, None)
 
     if not window:
         glfw.terminate()
@@ -29,6 +29,10 @@ if __name__ == '__main__':
     # Assembling the shader program (pipeline) with both shaders
     pipeline = es.SimpleTransformShaderProgram()
 
+    # Assembling the shader program (pipeline2) with both shaders
+    pipeline2 = es.SimpleTextureTransformShaderProgram()
+    glUseProgram(pipeline2.shaderProgram)
+
     glClearColor(16/255, 74/255, 3/255, 1.0)
 
     # Our shapes here are always fully painted
@@ -40,9 +44,11 @@ if __name__ == '__main__':
 
     controller.set_model(snake)
 
-    apple = Apple()
+    apple = Apple(N)
 
     border = Scene()
+
+    logic = Logic(snake)
 
     t0 = 0
 
@@ -62,11 +68,13 @@ if __name__ == '__main__':
         border.draw(pipeline, N)
         snake.draw(pipeline, N)
         apple.draw(pipeline, N)
+        logic.draw(pipeline, N)
 
-        if dt >= 0.3 and snake.on:
-            snake.update(N)
-            snake.borderCollision(N)
-            snake.appleEaten(N, apple)
+        if dt >= 0.2 and snake.on:
+            logic.movement(N)
+            logic.borderCollision(N)
+            logic.bodyCollision(N)
+            logic.appleEaten(N, apple)
             t0 = ti
         
 

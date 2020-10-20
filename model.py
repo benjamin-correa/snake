@@ -14,7 +14,7 @@ class Snake (object):
 
     def __init__ (self):
         gpu_head_quad = es.toGPUShape(
-            bs.createColorQuad(255/255, 255/255, 116/255))
+            bs.createTextureQuad("img/Snake_Head.png"), GL_REPEAT, GL_NEAREST)
         head = sg.SceneGraphNode("head")
         head.transform = tr.translate(0,0,0)
         head.childs += [gpu_head_quad]
@@ -25,8 +25,8 @@ class Snake (object):
         self.on = True
         
     def draw (self, pipeline, N):
-        self.model.transform = tr.matmul([
-            tr.translate(self.posx,self.posy,0), tr.uniformScale(1/N)])
+        self.model.transform = np.matmul(
+            tr.translate(self.posx,self.posy,0), tr.uniformScale(1/N))
         sg.drawSceneGraphNode(self.model, pipeline, 'transform')
 
     def update(self, N):
@@ -45,7 +45,7 @@ class Body(object):
     """
     def __init__ (self, x, y):
         gpu_body_quad = es.toGPUShape(
-            bs.createColorQuad(200/255, 200/255, 116/255))
+            bs.createTextureQuad("img/Snake_Body.png"), GL_REPEAT, GL_NEAREST)
         body = sg.SceneGraphNode("body")
         body.transform = tr.translate(0,0,0)
         body.childs += [gpu_body_quad]
@@ -71,12 +71,18 @@ class Logic(object):
         self.body = []
 
     def addBody (self):
+        """
+        Appends a body part on the end
+        """
         if len(self.body) == 0:
             self.body.append(Body(self.head.posx, self.head.posy))
         else:
             self.body.append(Body(self.body[len(self.body)-1].posx, self.body[len(self.body)-1].posy))
 
     def movement (self, N):
+        """
+        Movement of the body
+        """
         x_head = self.head.posx
         y_head = self.head.posy
         self.head.update(N)
@@ -90,15 +96,22 @@ class Logic(object):
             y_head = y_copy
         
     def bodyCollision(self, N):
+        """
+        Checks if the snake is colliding with his body
+        """
         x_head = self.head.posx
         y_head = self.head.posy
         for i in self.body:
-            if ((i.posx - 1/N < x_head < i.posx +1/N) and
-                (i.posy - 1/N < y_head < i.posy +1/N)):
+            if ((i.posx - 1/(2*N) < x_head < i.posx +1/(2*N)) and
+                (i.posy - 1/(2*N) < y_head < i.posy +1/(2*N))):
                 self.head.on = False
                 print("Game Over, tu puntaje es:", len(self.body))
     
     def borderCollision (self, N):
+        """
+        Checks if the snake is colliding with the border
+        """
+
         x_head = self.head.posx
         y_head = self.head.posy
         if x_head >= 1 - (1/(2*N)) or y_head >= 1 - (1/(2*N)):
@@ -118,8 +131,8 @@ class Logic(object):
         """
         x_head = self.head.posx
         y_head = self.head.posy
-        if ((apple.posx - 1/N < x_head < apple.posx +1/N) and 
-            (apple.posy - 1/N < y_head < apple.posy +1/N)):
+        if ((apple.posx - 1/(2*N) < x_head < apple.posx +1/(2*N)) and 
+            (apple.posy - 1/(2*N) < y_head < apple.posy +1/(2*N))):
 
             self.addBody()
 
@@ -233,10 +246,30 @@ class Apple (object):
 
         self.model = transform_apple
         self.posx = 0
-        self.posy = 0
+        self.posy = 1/N
 
     def draw (self, pipeline, N):
         self.model.transform = tr.matmul([
             tr.translate(self.posx,self.posy,0), tr.uniformScale(1/N)])
         sg.drawSceneGraphNode(self.model, pipeline, 'transform')
 
+class EndScreeen(object):
+
+    """
+    Displays the game over texture
+    """
+
+    def __init__(self):
+        gpu_end_quad = es.toGPUShape(
+                bs.createTextureQuad("img/GO.png"), GL_REPEAT, GL_NEAREST)
+        end = sg.SceneGraphNode("end")
+        end.transform = tr.translate(0,0,0)
+        end.childs += [gpu_end_quad]
+        self.posx = 0 
+        self.posy = 0
+        self.model = end
+        
+    def draw (self, pipeline, N):
+        self.model.transform = np.matmul(
+            tr.translate(self.posx+0.1,self.posy+0.05, 0), tr.rotationZ(np.pi/6))
+        sg.drawSceneGraphNode(self.model, pipeline, 'transform')

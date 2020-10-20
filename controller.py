@@ -20,13 +20,13 @@ class Controller(object):
         if action == glfw.PRESS:
             if key == glfw.KEY_ESCAPE:
                 sys.exit()
-            elif key == glfw.KEY_UP and self.model.direction != "DOWN":
+            elif (key == glfw.KEY_UP or key == glfw.KEY_W) and self.model.direction != "DOWN":
                 self.model.direction = "UP"
-            elif key == glfw.KEY_DOWN and self.model.direction != "UP":
+            elif (key == glfw.KEY_DOWN or key == glfw.KEY_S) and self.model.direction != "UP":
                 self.model.direction = "DOWN"
-            elif key == glfw.KEY_LEFT and self.model.direction != "RIGHT":
+            elif (key == glfw.KEY_LEFT or key == glfw.KEY_A) and self.model.direction != "RIGHT":
                 self.model.direction = "LEFT"
-            elif key == glfw.KEY_RIGHT and self.model.direction != "LEFT":
+            elif (key == glfw.KEY_RIGHT or key == glfw.KEY_D) and self.model.direction != "LEFT":
                 self.model.direction = "RIGHT"
 
 

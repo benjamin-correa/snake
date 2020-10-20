@@ -1,8 +1,10 @@
 Version 2.0
 -----------
+
 ``RC.1`` Implemented game over screen
 ``B.2`` Implemented adaptative game speed to the grid size
 ``B.1`` Added textures to the snake head and body
+
 
 Version 1.0
 -----------
